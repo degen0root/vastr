@@ -11,6 +11,7 @@ from models.response_models import PanchangaResponse, SunPosition, MoonPosition,
 from utils.astronomy import get_sun_moon_positions, get_sunrise_sunset_times
 from core.vara import calculate_vara
 from core.tithi import calculate_tithi
+from core.nakshatra import calculate_nakshatra
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -63,12 +64,16 @@ async def calculate_panchanga(request: PanchangaRequest):
         # Calculate Tithi
         tithi = calculate_tithi(dt, request.latitude, request.longitude)
         
+        # Calculate Nakshatra
+        nakshatra = calculate_nakshatra(dt, request.latitude, request.longitude)
+        
         return PanchangaResponse(
             sun=sun_pos,
             moon=moon_pos,
             times={"sunrise": sunrise.isoformat(), "sunset": sunset.isoformat()},
             vara=vara,
-            tithi=tithi
+            tithi=tithi,
+            nakshatra=nakshatra
         )
         
     except Exception as e:

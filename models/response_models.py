@@ -28,10 +28,9 @@ class NakshatraInfo(BaseModel):
     number: int
     name: str
     ruler: str
-    type: str
+    deity: str
     start: str
     end: str
-    is_auspicious: bool
 
 class KaranaInfo(BaseModel):
     number: int
@@ -63,8 +62,9 @@ class RawData(BaseModel):
     moon: CelestialPosition
 
 class PanchangaResponse(BaseModel):
-    sun: SunPosition
-    moon: MoonPosition
-    times: Times
+    sun: Dict[str, float]
+    moon: Dict[str, float]
+    times: Dict[str, str]
     vara: VaraInfo
-    tithi: TithiInfo 
+    tithi: TithiInfo
+    nakshatra: NakshatraInfo 
