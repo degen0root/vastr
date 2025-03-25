@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import pytz
 import swisseph as swe
 import logging
+from pydantic import BaseModel
+from typing import Optional
 
 from models.request_models import PanchangaRequest
 from models.response_models import PanchangaResponse, SunPosition, MoonPosition, Times, VaraInfo, TithiInfo
@@ -12,9 +14,10 @@ from utils.astronomy import get_sun_moon_positions, get_sunrise_sunset_times
 from core.vara import calculate_vara
 from core.tithi import calculate_tithi
 from core.nakshatra import calculate_nakshatra
+from core.yoga import calculate_yoga
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize Swiss Ephemeris
@@ -43,6 +46,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class PanchangaRequest(BaseModel):
+    datetime: str
+    latitude: float
+    longitude: float
+
 @app.post("/panchanga", response_model=PanchangaResponse)
 async def calculate_panchanga(request: PanchangaRequest):
     """
@@ -67,13 +75,17 @@ async def calculate_panchanga(request: PanchangaRequest):
         # Calculate Nakshatra
         nakshatra = calculate_nakshatra(dt, request.latitude, request.longitude)
         
+        # Calculate Yoga
+        yoga = calculate_yoga(dt, request.latitude, request.longitude)
+        
         return PanchangaResponse(
             sun=sun_pos,
             moon=moon_pos,
             times={"sunrise": sunrise.isoformat(), "sunset": sunset.isoformat()},
             vara=vara,
             tithi=tithi,
-            nakshatra=nakshatra
+            nakshatra=nakshatra,
+            yoga=yoga
         )
         
     except Exception as e:

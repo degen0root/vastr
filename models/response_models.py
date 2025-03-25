@@ -24,11 +24,9 @@ class TithiInfo(BaseModel):
     start: str
     end: str
 
-class NakshatraInfo(BaseModel):
+class Nakshatra(BaseModel):
     number: int
     name: str
-    ruler: str
-    deity: str
     start: str
     end: str
 
@@ -61,10 +59,17 @@ class RawData(BaseModel):
     sun: CelestialPosition
     moon: CelestialPosition
 
+class Yoga(BaseModel):
+    number: int
+    name: str
+    start: str
+    end: str
+
 class PanchangaResponse(BaseModel):
-    sun: Dict[str, float]
-    moon: Dict[str, float]
-    times: Dict[str, str]
+    sun: SunPosition
+    moon: MoonPosition
+    times: Times
     vara: VaraInfo
     tithi: TithiInfo
-    nakshatra: NakshatraInfo 
+    nakshatra: Nakshatra
+    yoga: Yoga 

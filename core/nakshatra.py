@@ -9,35 +9,35 @@ logger = logging.getLogger(__name__)
 # Each nakshatra spans 13°20' (13.3333... degrees)
 NAKSHATRA_SPAN = 360 / 27
 
-# Nakshatra information with traditional names and meanings
+# Nakshatra information
 NAKSHATRA_INFO = {
-    1: {"name": "Ashwini", "ruler": "Ketu", "deity": "Ashwini Kumaras"},
-    2: {"name": "Bharani", "ruler": "Venus", "deity": "Yama"},
-    3: {"name": "Krittika", "ruler": "Sun", "deity": "Agni"},
-    4: {"name": "Rohini", "ruler": "Moon", "deity": "Brahma"},
-    5: {"name": "Mrigashira", "ruler": "Mars", "deity": "Soma"},
-    6: {"name": "Ardra", "ruler": "Rahu", "deity": "Rudra"},
-    7: {"name": "Punarvasu", "ruler": "Jupiter", "deity": "Aditi"},
-    8: {"name": "Pushya", "ruler": "Saturn", "deity": "Brihaspati"},
-    9: {"name": "Ashlesha", "ruler": "Mercury", "deity": "Nagas"},
-    10: {"name": "Magha", "ruler": "Ketu", "deity": "Pitris"},
-    11: {"name": "Purva Phalguni", "ruler": "Venus", "deity": "Bhaga"},
-    12: {"name": "Uttara Phalguni", "ruler": "Sun", "deity": "Aryaman"},
-    13: {"name": "Hasta", "ruler": "Moon", "deity": "Savitar"},
-    14: {"name": "Chitra", "ruler": "Mars", "deity": "Tvashtar"},
-    15: {"name": "Swati", "ruler": "Rahu", "deity": "Vayu"},
-    16: {"name": "Vishakha", "ruler": "Jupiter", "deity": "Indra-Agni"},
-    17: {"name": "Anuradha", "ruler": "Saturn", "deity": "Mitra"},
-    18: {"name": "Jyeshtha", "ruler": "Mercury", "deity": "Indra"},
-    19: {"name": "Mula", "ruler": "Ketu", "deity": "Nirrti"},
-    20: {"name": "Purva Ashadha", "ruler": "Venus", "deity": "Apas"},
-    21: {"name": "Uttara Ashadha", "ruler": "Sun", "deity": "Vishvedevas"},
-    22: {"name": "Shravana", "ruler": "Moon", "deity": "Vishnu"},
-    23: {"name": "Dhanishta", "ruler": "Mars", "deity": "Vasus"},
-    24: {"name": "Shatabhisha", "ruler": "Rahu", "deity": "Varuna"},
-    25: {"name": "Purva Bhadrapada", "ruler": "Jupiter", "deity": "Aja Ekapada"},
-    26: {"name": "Uttara Bhadrapada", "ruler": "Saturn", "deity": "Ahir Budhnya"},
-    27: {"name": "Revati", "ruler": "Mercury", "deity": "Pushan"}
+    1: "Ashwini",
+    2: "Bharani",
+    3: "Krittika",
+    4: "Rohini",
+    5: "Mrigashira",
+    6: "Ardra",
+    7: "Punarvasu",
+    8: "Pushya",
+    9: "Ashlesha",
+    10: "Magha",
+    11: "Purva Phalguni",
+    12: "Uttara Phalguni",
+    13: "Hasta",
+    14: "Chitra",
+    15: "Swati",
+    16: "Vishakha",
+    17: "Anuradha",
+    18: "Jyeshtha",
+    19: "Mula",
+    20: "Purva Ashadha",
+    21: "Uttara Ashadha",
+    22: "Shravana",
+    23: "Dhanishta",
+    24: "Shatabhisha",
+    25: "Purva Bhadrapada",
+    26: "Uttara Bhadrapada",
+    27: "Revati"
 }
 
 def get_nakshatra_number(moon_longitude: float) -> int:
@@ -217,11 +217,9 @@ def calculate_nakshatra(dt: datetime, lat: float, lon: float) -> dict:
         
         result = {
             "number": nakshatra_num,
-            "name": nakshatra_info["name"],
-            "ruler": nakshatra_info["ruler"],
-            "deity": nakshatra_info["deity"],
-            "start": start_time.strftime("%Y-%m-%d %H:%M:%S"),
-            "end": end_time.strftime("%Y-%m-%d %H:%M:%S")
+            "name": nakshatra_info,
+            "start": start_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
+            "end": end_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00")
         }
         
         logger.debug(f"=== Nakshatra calculation complete ===")

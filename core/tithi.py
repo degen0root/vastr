@@ -183,8 +183,8 @@ def calculate_tithi(dt: datetime, lat: float, lon: float) -> dict:
         
         result = {
             "number": tithi_num,
-            "start": start_time.strftime("%Y-%m-%d %H:%M:%S"),
-            "end": end_time.strftime("%Y-%m-%d %H:%M:%S")
+            "start": start_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
+            "end": end_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00")
         }
         
         logger.debug(f"=== Tithi calculation complete ===")
