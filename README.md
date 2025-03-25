@@ -1,48 +1,47 @@
-# Vastr - Vedic Astrological System for Time Reckoning
+# Vastr Panchanga API
 
-A modern FastAPI-based service for calculating Vedic astrological elements (Panchanga) using the Swiss Ephemeris library.
+A RESTful API service that calculates Vedic Panchanga (astrological calendar) elements including Vara (weekday), Tithi (lunar day), Nakshatra (lunar mansion), and Yoga (lunar-solar combination) for any given date, time, and location.
 
 ## Features
 
-- Calculates all five elements of Panchanga:
-  1. Vara (Weekday)
-  2. Tithi (Lunar Day)
-  3. Nakshatra (Lunar Mansion)
-  4. Karana (Half-Tithi)
-  5. Yoga (Sun-Moon Combination)
-- Uses high-precision Swiss Ephemeris calculations
-- Supports timezone detection based on coordinates
-- Provides detailed information about each astrological element
-- RESTful API with JSON responses
-- CORS-enabled for web applications
-- Containerized with Docker for easy deployment
+- **Vara (Weekday) Calculation**
+  - Calculates the weekday and its astrological properties
+  - Includes favorable/unfavorable status and planetary ruler
+  - Supports all seven weekdays with their Sanskrit names (Ravi, Soma, Mangala, Budha, Guru, Shukra, Shani)
+
+- **Tithi (Lunar Day) Calculation**
+  - Determines the current tithi (lunar day)
+  - Provides start and end times of the tithi
+  - Calculates absolute tithi number (1-30)
+
+- **Nakshatra (Lunar Mansion) Calculation**
+  - Identifies the current nakshatra (lunar mansion)
+  - Provides start and end times of the nakshatra
+  - Includes nakshatra number (1-27) and name
+  - Calculates planetary ruler for each nakshatra
+
+- **Yoga (Lunar-Solar Combination) Calculation**
+  - Calculates the current yoga based on combined positions of Sun and Moon
+  - Provides start and end times of the yoga
+  - Includes yoga number (1-27) and name
+  - Each yoga spans 13.333... degrees of combined Sun-Moon longitude
 
 ## Installation
 
-### Using Docker (Recommended)
+### Prerequisites
+
+- Python 3.11 or higher
+- Docker (optional, for containerized deployment)
+
+### Local Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/vastr.git
+git clone https://github.com/akaalius/vastr.git
 cd vastr
 ```
 
-2. Build and start the container:
-```bash
-docker compose up -d
-```
-
-The API will be available at `http://localhost:8000`
-
-### Manual Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/vastr.git
-cd vastr
-```
-
-2. Create a virtual environment and activate it:
+2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -53,170 +52,133 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Start the server:
+4. Run the API:
 ```bash
-python main.py
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-## Docker Commands
+### Docker Installation
 
-### Building the Container
+1. Build the Docker image:
 ```bash
-docker compose build
+docker build -t vastr-panchanga-api .
 ```
 
-### Starting the Container
+2. Run the container:
 ```bash
-docker compose up -d
+docker run -d --name vastr-panchanga-api -p 8000:8000 vastr-panchanga-api
 ```
 
-### Stopping the Container
-```bash
-docker compose down
+## Usage
+
+### API Endpoints
+
+#### POST /panchanga
+
+Calculate all Panchanga elements for a given datetime and location.
+
+**Request:**
+```json
+{
+    "datetime": "2025-04-04T14:00:00Z",
+    "latitude": 51.4769,
+    "longitude": -0.0005
+}
 ```
 
-### Viewing Logs
-```bash
-docker compose logs -f
+**Response:**
+```json
+{
+    "sun": {
+        "longitude": 350.8387606169285,
+        "latitude": 0.00010088933104459311
+    },
+    "moon": {
+        "longitude": 74.46095747888872,
+        "latitude": 5.166799261185946
+    },
+    "times": {
+        "sunrise": "2025-04-04T05:27:59.554894+00:00",
+        "sunset": "2025-04-04T18:38:51.842954+00:00"
+    },
+    "vara": {
+        "vara": "Shukra",
+        "name": "Friday",
+        "favorable": "Favorable",
+        "ruler": "Venus"
+    },
+    "tithi": {
+        "number": 7,
+        "start": "2025-04-03T16:11:52.704630+00:00",
+        "end": "2025-04-04T14:43:10.959566+00:00"
+    },
+    "nakshatra": {
+        "number": 6,
+        "name": "Ardra",
+        "start": "2025-04-04T00:21:14.675765+00:00",
+        "end": "2025-04-04T23:50:34.979206+00:00"
+    },
+    "yoga": {
+        "number": 5,
+        "name": "Shobhana",
+        "start": "2025-04-03T18:31:19.207549+00:00",
+        "end": "2025-04-04T16:15:14.020255+00:00"
+    }
+}
 ```
 
-### Rebuilding and Restarting
-```bash
-docker compose down && docker compose up -d --build
-```
+### Example Usage with curl
 
-## API Usage
-
-### Example Request
 ```bash
 curl -X POST "http://localhost:8000/panchanga" \
      -H "Content-Type: application/json" \
      -d '{
-       "datetime": "2024-03-22 08:00",
-       "latitude": 12.9716,
-       "longitude": 77.5946,
-       "elevation": 920
-     }'
+           "datetime": "2025-04-04T14:00:00Z",
+           "latitude": 51.4769,
+           "longitude": -0.0005
+         }'
 ```
 
-## API Documentation
+### Example Usage with Python
 
-### POST /panchanga
+```python
+import requests
 
-Calculate Panchanga elements for a given datetime and location.
-
-#### Request Body
-
-```json
-{
-  "datetime": "YYYY-MM-DD HH:MM",
-  "latitude": float,
-  "longitude": float,
-  "elevation": float (optional),
-  "timezone": string (optional)
+url = "http://localhost:8000/panchanga"
+data = {
+    "datetime": "2025-04-04T14:00:00Z",
+    "latitude": 51.4769,
+    "longitude": -0.0005
 }
+
+response = requests.post(url, json=data)
+print(response.json())
 ```
 
-#### Response
+## Development
 
-```json
-{
-  "vara": {
-    "number": int,
-    "name": string,
-    "is_auspicious": boolean,
-    "sunrise": string,
-    "sunset": string,
-    "next_sunrise": string,
-    "ruler": string,
-    "deities": string[],
-    "resonant_nakshatras": string[]
-  },
-  "tithi": {
-    "number": int,
-    "name": string,
-    "element": string,
-    "activity": string,
-    "start": string,
-    "end": string,
-    "paksha": string,
-    "ruler": string,
-    "deity": string,
-    "type": string
-  },
-  "nakshatra": {
-    "number": int,
-    "name": string,
-    "ruler": string,
-    "type": string,
-    "start": string,
-    "end": string,
-    "is_auspicious": boolean
-  },
-  "karana": {
-    "number": int,
-    "name": string,
-    "activity": string,
-    "start": string,
-    "end": string,
-    "ruler": string,
-    "deity": string,
-    "favorable_activities": string[],
-    "is_auspicious": boolean
-  },
-  "yoga": {
-    "number": int,
-    "name": string,
-    "description": string,
-    "start": string,
-    "end": string,
-    "ruler": string,
-    "deity": string,
-    "is_auspicious": boolean
-  }
-}
-```
-
-## Project Structure
+### Project Structure
 
 ```
 vastr/
 ├── core/
-│   ├── vara.py
-│   ├── tithi.py
-│   ├── nakshatra.py
-│   ├── karana.py
-│   └── yoga.py
-├── models/
-│   ├── request_models.py
-│   └── response_models.py
+│   ├── vara.py      # Weekday calculations
+│   ├── tithi.py     # Lunar day calculations
+│   ├── nakshatra.py # Lunar mansion calculations
+│   └── yoga.py      # Lunar-solar combination calculations
 ├── utils/
-│   └── astronomy.py
-├── ephe/
-│   └── ... (ephemeris files)
-├── main.py
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-├── .dockerignore
-└── README.md
+│   └── astronomy.py # Astronomical calculations
+├── main.py          # FastAPI application
+├── requirements.txt # Python dependencies
+└── Dockerfile      # Container configuration
 ```
 
-## Dependencies
+### Running Tests
 
-- FastAPI: Modern web framework for building APIs
-- Uvicorn: ASGI server for running FastAPI
-- Swiss Ephemeris: High-precision astronomical calculations
-- TimezoneFinder: Determine timezone from coordinates
-- PyTZ: Timezone database and utilities
-- Pydantic: Data validation using Python type annotations
+```bash
+pytest
+```
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Swiss Ephemeris for providing high-precision astronomical calculations
-- FastAPI for the excellent web framework
-- The Vedic astrology community for preserving this knowledge 
+This project is licensed under the MIT License - see the LICENSE file for details. 

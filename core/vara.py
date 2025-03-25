@@ -1,45 +1,45 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 
-# Detailed Vara information in Russian
+# Detailed Vara information in English
 VARA_INFO = {
     "Soma": {
-        "name": "Понедельник",
-        "favorable": "Благоприятный",
-        "ruler": "Луна"
+        "name": "Monday",
+        "favorable": "Favorable",
+        "ruler": "Moon"
     },
     "Mangala": {
-        "name": "Вторник",
-        "favorable": "Неблагоприятный",
-        "ruler": "Марс"
+        "name": "Tuesday",
+        "favorable": "Unfavorable",
+        "ruler": "Mars"
     },
     "Budha": {
-        "name": "Среда",
-        "favorable": "Благоприятный",
-        "ruler": "Меркурий"
+        "name": "Wednesday",
+        "favorable": "Favorable",
+        "ruler": "Mercury"
     },
     "Guru": {
-        "name": "Четверг",
-        "favorable": "Благоприятный",
-        "ruler": "Юпитер"
+        "name": "Thursday",
+        "favorable": "Favorable",
+        "ruler": "Jupiter"
     },
     "Shukra": {
-        "name": "Пятница",
-        "favorable": "Благоприятный",
-        "ruler": "Венера"
+        "name": "Friday",
+        "favorable": "Favorable",
+        "ruler": "Venus"
     },
     "Shani": {
-        "name": "Суббота",
-        "favorable": "Неблагоприятный",
-        "ruler": "Сатурн"
+        "name": "Saturday",
+        "favorable": "Unfavorable",
+        "ruler": "Saturn"
     },
     "Ravi": {
-        "name": "Воскресенье",
-        "favorable": "Благоприятный",
-        "ruler": "Солнце"
+        "name": "Sunday",
+        "favorable": "Favorable",
+        "ruler": "Sun"
     }
 }
 
@@ -51,7 +51,7 @@ def calculate_vara(datetime_obj: datetime) -> Dict[str, str]:
         datetime_obj (datetime): The datetime to calculate Vara for
         
     Returns:
-        Dict[str, str]: Dictionary containing Vara information in Russian
+        Dict[str, str]: Dictionary containing Vara information in English
     """
     try:
         # Get weekday (0 = Monday, 6 = Sunday)
@@ -85,7 +85,7 @@ def calculate_vara(datetime_obj: datetime) -> Dict[str, str]:
         logger.error(f"Error calculating Vara: {str(e)}")
         return {
             "vara": "Unknown",
-            "name": "Неизвестно",
-            "favorable": "Неизвестно",
-            "ruler": "Неизвестно"
+            "name": "Unknown",
+            "favorable": "Unknown",
+            "ruler": "Unknown"
         } 
