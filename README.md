@@ -59,15 +59,20 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ### Docker Installation
 
-1. Build the Docker image:
+1. Build and run the container:
 ```bash
-docker build -t vastr-panchanga-api .
+docker stop vastr-panchanga-api; docker rm vastr-panchanga-api; docker build -t vastr-panchanga-api . && docker run -d --name vastr-panchanga-api -p 8000:8000 vastr-panchanga-api
 ```
 
-2. Run the container:
-```bash
-docker run -d --name vastr-panchanga-api -p 8000:8000 vastr-panchanga-api
-```
+This command will:
+- Stop any existing container named `vastr-panchanga-api`
+- Remove the old container
+- Build a new Docker image from the current directory
+- Run a new container in detached mode (-d)
+- Name the container `vastr-panchanga-api`
+- Map port 8000 from the container to the host
+
+The API will be available at `http://localhost:8000`
 
 ## Usage
 
