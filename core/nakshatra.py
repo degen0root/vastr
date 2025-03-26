@@ -40,6 +40,37 @@ NAKSHATRA_INFO = {
     27: "Revati"
 }
 
+# Constellation information for each nakshatra
+CONSTELLATION_INFO = {
+    1: "Aries",
+    2: "Aries",
+    3: "Taurus",
+    4: "Taurus",
+    5: "Taurus",
+    6: "Gemini",
+    7: "Gemini",
+    8: "Cancer",
+    9: "Cancer",
+    10: "Leo",
+    11: "Leo",
+    12: "Leo",
+    13: "Virgo",
+    14: "Virgo",
+    15: "Libra",
+    16: "Libra",
+    17: "Scorpio",
+    18: "Scorpio",
+    19: "Sagittarius",
+    20: "Sagittarius",
+    21: "Capricorn",
+    22: "Capricorn",
+    23: "Aquarius",
+    24: "Aquarius",
+    25: "Pisces",
+    26: "Pisces",
+    27: "Pisces"
+}
+
 def get_nakshatra_number(moon_longitude: float) -> int:
     """
     Calculate nakshatra number (1-27) from Moon's longitude.
@@ -201,12 +232,21 @@ def calculate_nakshatra(dt: datetime, lat: float, lon: float) -> dict:
         # Get nakshatra information
         nakshatra_info = NAKSHATRA_INFO[nakshatra_num]
         
+        # Get constellation information
+        constellation = CONSTELLATION_INFO[nakshatra_num]
+        
         # Find end time of current nakshatra
         end_time = find_nakshatra_boundary(dt, lat, lon, nakshatra_num, 1)
         
         # Find start time by finding end time of previous nakshatra
         prev_nakshatra = nakshatra_num - 1 if nakshatra_num > 1 else 27
         start_time = find_nakshatra_boundary(end_time - timedelta(days=1), lat, lon, prev_nakshatra, 1)
+        
+        # Calculate constellation boundaries
+        # Constellation boundaries are the same as nakshatra boundaries
+        # since nakshatras are based on constellations
+        constellation_start = start_time
+        constellation_end = end_time
         
         # Validate duration (nakshatras typically last between 22-26 hours)
         duration = (end_time - start_time).total_seconds()
@@ -219,7 +259,10 @@ def calculate_nakshatra(dt: datetime, lat: float, lon: float) -> dict:
             "number": nakshatra_num,
             "name": nakshatra_info,
             "start": start_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
-            "end": end_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00")
+            "end": end_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
+            "constellation": constellation,
+            "constellation_start": constellation_start.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
+            "constellation_end": constellation_end.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00")
         }
         
         logger.debug(f"=== Nakshatra calculation complete ===")

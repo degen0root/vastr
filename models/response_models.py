@@ -29,6 +29,9 @@ class Nakshatra(BaseModel):
     name: str
     start: str
     end: str
+    constellation: str  # Current moon constellation
+    constellation_start: str  # Start time of current constellation
+    constellation_end: str  # End time of current constellation
 
 
 class CelestialPosition(BaseModel):
