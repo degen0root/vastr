@@ -242,12 +242,6 @@ def calculate_nakshatra(dt: datetime, lat: float, lon: float) -> dict:
         prev_nakshatra = nakshatra_num - 1 if nakshatra_num > 1 else 27
         start_time = find_nakshatra_boundary(end_time - timedelta(days=1), lat, lon, prev_nakshatra, 1)
         
-        # Calculate constellation boundaries
-        # Constellation boundaries are the same as nakshatra boundaries
-        # since nakshatras are based on constellations
-        constellation_start = start_time
-        constellation_end = end_time
-        
         # Validate duration (nakshatras typically last between 22-26 hours)
         duration = (end_time - start_time).total_seconds()
         if duration < 20 * 3600 or duration > 28 * 3600:  # Between 20 and 28 hours
@@ -260,9 +254,7 @@ def calculate_nakshatra(dt: datetime, lat: float, lon: float) -> dict:
             "name": nakshatra_info,
             "start": start_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
             "end": end_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
-            "constellation": constellation,
-            "constellation_start": constellation_start.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
-            "constellation_end": constellation_end.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00")
+            "constellation": constellation
         }
         
         logger.debug(f"=== Nakshatra calculation complete ===")
