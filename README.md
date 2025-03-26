@@ -23,6 +23,14 @@ A FastAPI-based service that calculates various elements of the Hindu Panchānga
 
 Calculate all Panchānga elements for a given date, time, and location.
 
+**Request Model:**
+```python
+class PanchangaRequest(BaseModel):
+    datetime: datetime  # UTC datetime
+    latitude: float    # Latitude in degrees (-90 to 90)
+    longitude: float   # Longitude in degrees (-180 to 180)
+```
+
 **Request Body:**
 ```json
 {
@@ -200,11 +208,34 @@ vastr/
 ├── utils/
 │   └── astronomy.py  # Astronomical calculations
 ├── models/
-│   └── response_models.py  # Pydantic models
+│   ├── request_models.py   # Request Pydantic models
+│   └── response_models.py  # Response Pydantic models
 ├── main.py           # FastAPI application
 ├── requirements.txt  # Python dependencies
 └── Dockerfile       # Container configuration
 ```
+
+### Data Models
+
+#### Request Models
+- `PanchangaRequest`: Input model for the /panchanga endpoint
+  - `datetime`: UTC datetime for calculations
+  - `latitude`: Geographic latitude (-90° to 90°)
+  - `longitude`: Geographic longitude (-180° to 180°)
+
+#### Response Models
+- `SunPosition`: Sun's astronomical position
+  - `longitude`: Ecliptic longitude
+  - `latitude`: Ecliptic latitude
+- `MoonPosition`: Moon's astronomical position
+  - `longitude`: Ecliptic longitude
+  - `latitude`: Ecliptic latitude
+- `Times`: Sunrise and sunset times
+- `Vara`: Weekday information
+- `Tithi`: Lunar day information
+- `Nakshatra`: Lunar mansion information
+- `Yoga`: Lunar-solar combination information
+- `Karana`: Half-tithi information
 
 ## License
 
