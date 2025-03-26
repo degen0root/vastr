@@ -70,7 +70,8 @@ class PanchangaRequest(BaseModel):
         "number": 25,
         "name": "Purva Bhadrapada",
         "start": "2025-03-27T19:03:46.478219+00:00",
-        "end": "2025-03-28T16:39:35.983116+00:00"
+        "end": "2025-03-28T16:39:35.983116+00:00",
+        "constellation": "Pisces"
     },
     "yoga": {
         "number": 24,
@@ -128,6 +129,19 @@ class PanchangaRequest(BaseModel):
   - Start/end times found by binary search for exact 13°20' boundaries
   - Each nakshatra has a ruling planet and deity
   - Used for determining auspicious times and personal characteristics
+- **Constellation Mapping**:
+  - Ashwini & Bharani: Aries
+  - Krittika, Rohini & Mrigashira: Taurus
+  - Ardra & Punarvasu: Gemini
+  - Pushya & Ashlesha: Cancer
+  - Magha, Purva Phalguni & Uttara Phalguni: Leo
+  - Hasta & Chitra: Virgo
+  - Swati & Vishakha: Libra
+  - Anuradha & Jyeshtha: Scorpio
+  - Mula & Purva Ashadha: Sagittarius
+  - Uttara Ashadha & Shravana: Capricorn
+  - Dhanishta & Shatabhisha: Aquarius
+  - Purva Bhadrapada, Uttara Bhadrapada & Revati: Pisces
 
 ### Yoga (Lunar-Solar Combination)
 - Represents the sum of Sun and Moon longitudes
