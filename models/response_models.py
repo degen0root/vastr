@@ -30,26 +30,6 @@ class Nakshatra(BaseModel):
     start: str
     end: str
 
-class KaranaInfo(BaseModel):
-    number: int
-    name: str
-    activity: str
-    start: str
-    end: str
-    ruler: str
-    deity: str
-    favorable_activities: List[str]
-    is_auspicious: bool
-
-class YogaInfo(BaseModel):
-    number: int
-    name: str
-    description: str
-    ruler: str
-    deity: str
-    start: str
-    end: str
-    is_auspicious: bool
 
 class CelestialPosition(BaseModel):
     longitude: float
@@ -65,11 +45,19 @@ class Yoga(BaseModel):
     start: str
     end: str
 
+class Karana(BaseModel):
+    number: int
+    name: str
+    start: str
+    end: str
+
 class PanchangaResponse(BaseModel):
     sun: SunPosition
     moon: MoonPosition
-    times: Times
+    times: Dict[str, str]
     vara: VaraInfo
     tithi: TithiInfo
     nakshatra: Nakshatra
-    yoga: Yoga 
+    yoga: Yoga
+    karana: Karana
+

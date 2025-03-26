@@ -9,12 +9,13 @@ from pydantic import BaseModel
 from typing import Optional
 
 from models.request_models import PanchangaRequest
-from models.response_models import PanchangaResponse, SunPosition, MoonPosition, Times, VaraInfo, TithiInfo
+from models.response_models import PanchangaResponse, SunPosition, MoonPosition, Times, VaraInfo, TithiInfo, Nakshatra, Yoga, Karana
 from utils.astronomy import get_sun_moon_positions, get_sunrise_sunset_times
 from core.vara import calculate_vara
 from core.tithi import calculate_tithi
 from core.nakshatra import calculate_nakshatra
 from core.yoga import calculate_yoga
+from core.karana import calculate_karana
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -78,6 +79,9 @@ async def calculate_panchanga(request: PanchangaRequest):
         # Calculate Yoga
         yoga = calculate_yoga(dt, request.latitude, request.longitude)
         
+        # Calculate Karana
+        karana = calculate_karana(dt, request.latitude, request.longitude)
+        
         return PanchangaResponse(
             sun=sun_pos,
             moon=moon_pos,
@@ -85,7 +89,8 @@ async def calculate_panchanga(request: PanchangaRequest):
             vara=vara,
             tithi=tithi,
             nakshatra=nakshatra,
-            yoga=yoga
+            yoga=yoga,
+            karana=karana
         )
         
     except Exception as e:
