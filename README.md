@@ -85,6 +85,13 @@ Calculate all Panchānga elements for a given date, time, and location.
 - Represents the angular distance (12°) between the Sun and Moon
 - 30 tithis in a lunar month (15 in Shukla Paksha, 15 in Krishna Paksha)
 - Each tithi is divided into two karanas
+- **Calculation Method**:
+  - Calculate the difference between Moon and Sun longitudes
+  - Each tithi spans 12° of this difference
+  - Tithi number = (moon_sun_diff / 12) + 1
+  - Start/end times found by binary search for exact 12° boundaries
+  - Shukla Paksha: Tithis 1-15 (waxing moon)
+  - Krishna Paksha: Tithis 16-30 (waning moon)
 
 ### Karana (Half of Tithi)
 - Represents 6° of the Moon's movement from the Sun
@@ -95,20 +102,63 @@ Calculate all Panchānga elements for a given date, time, and location.
   - Shakuni: Chaturdashi in Krishna Paksha
   - Chatushpada & Naga: Amavasya
   - Kimstughna: Purnima
+- **Calculation Method**:
+  - Each tithi contains exactly 2 karanas (6° each)
+  - Movable karanas follow a cycle of 7 (repeating every 8 tithis)
+  - Fixed karanas appear on specific tithis based on traditional rules
+  - Boundaries calculated astronomically using binary search for 6° crossings
+  - Vishti (Bhadra) karana is considered inauspicious for important activities
 
 ### Nakshatra (Lunar Mansion)
 - Represents the Moon's position relative to fixed stars
 - 27 nakshatras in total
 - Each nakshatra spans 13°20' of the ecliptic
+- **Calculation Method**:
+  - Calculate Moon's longitude relative to fixed stars
+  - Each nakshatra spans 13°20' (13.333... degrees)
+  - Nakshatra number = (moon_longitude / 13.333...) + 1
+  - Start/end times found by binary search for exact 13°20' boundaries
+  - Each nakshatra has a ruling planet and deity
+  - Used for determining auspicious times and personal characteristics
 
 ### Yoga (Lunar-Solar Combination)
 - Represents the sum of Sun and Moon longitudes
 - 27 yogas in total
 - Each yoga spans 13°20' of the ecliptic
+- **Calculation Method**:
+  - Add Sun and Moon longitudes (modulo 360°)
+  - Each yoga spans 13°20' (13.333... degrees)
+  - Yoga number = (combined_longitude / 13.333...) + 1
+  - Start/end times found by binary search for exact 13°20' boundaries
+  - Yogas influence the overall nature of the day
+  - Some yogas are considered auspicious, others inauspicious
 
 ### Vara (Weekday)
 - Traditional weekday with additional attributes
 - Includes favorable/inauspicious status and planetary ruler
+- **Calculation Method**:
+  - Determine weekday from Julian Day Number
+  - Each day has a ruling planet:
+    - Sunday (Ravi): Sun
+    - Monday (Soma): Moon
+    - Tuesday (Mangala): Mars
+    - Wednesday (Budha): Mercury
+    - Thursday (Guru): Jupiter
+    - Friday (Shukra): Venus
+    - Saturday (Shani): Saturn
+  - Favorable status based on traditional rules:
+    - Monday, Wednesday, Thursday, Friday: Generally favorable
+    - Tuesday, Saturday: Generally unfavorable
+    - Sunday: Neutral
+  - Used for determining auspicious days for various activities
+
+### Astronomical Calculations
+All calculations are based on precise astronomical positions using the Swiss Ephemeris:
+- Sun and Moon positions calculated for exact requested time
+- Longitudes and latitudes in ecliptic coordinates
+- All times in UTC with proper timezone handling
+- Binary search used to find exact boundary times
+- Sunrise and sunset times calculated for given location
 
 ## Installation
 
