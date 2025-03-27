@@ -63,6 +63,7 @@ class PanchangaRequest(BaseModel):
     },
     "tithi": {
         "number": 29,
+        "name": "Chaturdashi",
         "start": "2025-03-27T17:33:54.958921+00:00",
         "end": "2025-03-28T14:25:44.926334+00:00"
     },
@@ -93,6 +94,9 @@ class PanchangaRequest(BaseModel):
 ### Tithi (Lunar Day)
 - Represents the angular distance (12°) between the Sun and Moon
 - 30 tithis in a lunar month (15 in Shukla Paksha, 15 in Krishna Paksha)
+- Each tithi has a traditional Sanskrit name:
+  - Shukla Paksha (1-15): Pratipada, Dwitiya, Tritiya, Chaturthi, Panchami, Shashthi, Saptami, Ashtami, Navami, Dashami, Ekadashi, Dwadashi, Trayodashi, Chaturdashi, Purnima
+  - Krishna Paksha (16-30): Pratipada, Dwitiya, Tritiya, Chaturthi, Panchami, Shashthi, Saptami, Ashtami, Navami, Dashami, Ekadashi, Dwadashi, Trayodashi, Chaturdashi, Amavasya
 - Each tithi is divided into two karanas
 - **Calculation Method**:
   - Calculate the difference between Moon and Sun longitudes
@@ -101,6 +105,7 @@ class PanchangaRequest(BaseModel):
   - Start/end times found by binary search for exact 12° boundaries
   - Shukla Paksha: Tithis 1-15 (waxing moon)
   - Krishna Paksha: Tithis 16-30 (waning moon)
+  - Names determined based on traditional Sanskrit nomenclature
 
 ### Karana (Half of Tithi)
 - Represents 6° of the Moon's movement from the Sun
