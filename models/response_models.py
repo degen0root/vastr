@@ -21,6 +21,7 @@ class VaraInfo(BaseModel):
 
 class TithiInfo(BaseModel):
     number: int
+    name: str
     start: str
     end: str
 

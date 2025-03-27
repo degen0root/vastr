@@ -6,8 +6,42 @@ import swisseph as swe
 
 logger = logging.getLogger(__name__)
 
-# Simplified TITHI_INFO - just numbers 1-30
-TITHI_INFO = {i: {} for i in range(1, 31)}
+# Each tithi spans 12° (360° / 30 tithis)
+TITHI_SPAN = 12
+
+# Tithi information
+TITHI_INFO = {
+    1: "Pratipada",
+    2: "Dwitiya",
+    3: "Tritiya",
+    4: "Chaturthi",
+    5: "Panchami",
+    6: "Shashthi",
+    7: "Saptami",
+    8: "Ashtami",
+    9: "Navami",
+    10: "Dashami",
+    11: "Ekadashi",
+    12: "Dwadashi",
+    13: "Trayodashi",
+    14: "Chaturdashi",
+    15: "Purnima",
+    16: "Pratipada",
+    17: "Dwitiya",
+    18: "Tritiya",
+    19: "Chaturthi",
+    20: "Panchami",
+    21: "Shashthi",
+    22: "Saptami",
+    23: "Ashtami",
+    24: "Navami",
+    25: "Dashami",
+    26: "Ekadashi",
+    27: "Dwadashi",
+    28: "Trayodashi",
+    29: "Chaturdashi",
+    30: "Amavasya"
+}
 
 def get_lunar_phase(dt: datetime, lat: float, lon: float) -> float:
     """
@@ -39,108 +73,59 @@ def get_lunar_phase(dt: datetime, lat: float, lon: float) -> float:
     logger.debug(f"=== Lunar phase calculation complete ===")
     return phase
 
-def find_tithi_boundary(dt: datetime, lat: float, lon: float, tithi: int, direction: int) -> datetime:
-    """
-    Find exact tithi boundary using phase-targeted search.
+def find_tithi_boundary(dt: datetime, lat: float, lon: float, target_diff: float) -> datetime:
+    """Find the exact time when Moon-Sun longitude difference equals target_diff.
     
     Args:
         dt (datetime): Starting datetime (UTC)
         lat (float): Latitude
         lon (float): Longitude
-        tithi (int): Absolute tithi number (1-30)
-        direction (int): Search direction (-1 for start, 1 for end)
-    
+        target_diff (float): Target Moon-Sun longitude difference in degrees
+        
     Returns:
-        datetime: The datetime of the tithi boundary
+        datetime: Time when Moon-Sun difference equals target_diff
     """
-    logger.debug(f"=== Starting tithi boundary search ===")
-    logger.debug(f"Search parameters - DateTime: {dt}, Tithi: {tithi}, Direction: {direction}")
+    jd_et, _ = datetime_to_jd(dt)
     
-    # Calculate target phase
-    target_phase = (tithi * 12) % 360 if direction == 1 else ((tithi - 1) * 12) % 360
-    logger.debug(f"Target phase: {target_phase}°")
+    # Get current difference to determine search direction
+    sun_pos, moon_pos = get_sun_moon_positions(dt, lat, lon)
+    current_diff = (moon_pos["longitude"] - sun_pos["longitude"]) % 360
     
-    # Convert to JD and set initial search parameters
-    jd_et, jd_ut = datetime_to_jd(dt)  # Get both ET and UT
-    jd = jd_et  # Use ET for astronomical calculations
-    step = 0.01  # Initial step (~14.4 minutes)
-    max_iterations = 1000  # Prevent infinite loops
+    # Determine search window based on current position
+    diff_to_target = (target_diff - current_diff) % 360
+    if diff_to_target > 180:
+        diff_to_target -= 360
     
-    logger.debug(f"Starting search from JD (ET): {jd}")
-    logger.debug(f"Initial step size: {step} days")
+    # Moon moves ~13.2° per day relative to Sun
+    days_to_target = abs(diff_to_target / 13.2)
+    search_window = max(0.5, min(1, days_to_target * 1.5))  # At least 0.5 days, at most 1 day
     
-    # First pass: Find approximate boundary with coarse steps
-    for i in range(max_iterations):
-        current_dt = jd_to_datetime(jd)  # Convert ET back to datetime
-        current_phase = get_lunar_phase(current_dt, lat, lon)
-        phase_diff = (current_phase - target_phase) % 360
+    if diff_to_target > 0:
+        left = jd_et
+        right = jd_et + search_window
+    else:
+        left = jd_et - search_window
+        right = jd_et
+    
+    for _ in range(32):
+        mid = (left + right) / 2
+        mid_dt = jd_to_datetime(mid)
         
-        logger.debug(f"Iteration {i}: JD (ET)={jd}, Phase={current_phase}°, Diff={phase_diff}°")
+        sun_pos, moon_pos = get_sun_moon_positions(mid_dt, lat, lon)
+        current_diff = (moon_pos["longitude"] - sun_pos["longitude"]) % 360
         
-        # Check if we've crossed the boundary
-        if (direction == 1 and phase_diff < 1.0) or (direction == -1 and phase_diff > 359.0):
-            # Found approximate boundary, now refine with binary search
-            left = jd - step if direction == 1 else jd
-            right = jd if direction == 1 else jd + step
+        if abs(current_diff - target_diff) < 1e-8:
+            return mid_dt
             
-            logger.debug(f"Found approximate boundary, refining between JD (ET) {left} and {right}")
+        if current_diff < target_diff:
+            left = mid
+        else:
+            right = mid
             
-            # Binary search for precise boundary
-            prev_mid = None
-            prev_phase = None
-            
-            for j in range(100):  # Increased from 50 to 100 iterations for refinement
-                mid = (left + right) / 2
-                mid_dt = jd_to_datetime(mid)  # Convert ET to datetime
-                mid_phase = get_lunar_phase(mid_dt, lat, lon)
-                
-                logger.debug(f"Refinement {j}: JD (ET)={mid}, Phase={mid_phase}°")
-                
-                # Store the previous point for interpolation
-                if prev_mid is None or (direction == 1 and mid_phase < target_phase) or (direction == -1 and mid_phase > target_phase):
-                    prev_mid = mid
-                    prev_phase = mid_phase
-                
-                if (direction == 1 and mid_phase >= target_phase) or (direction == -1 and mid_phase <= target_phase):
-                    right = mid
-                else:
-                    left = mid
-                
-                if abs(right - left) < 1e-12:  # Increased precision from 1e-8 to 1e-12
-                    break
-            
-            # Linear interpolation to find exact transition point
-            if prev_mid is not None and prev_phase is not None:
-                # Get the final two points
-                point1 = (prev_mid, prev_phase)
-                point2 = (right, get_lunar_phase(jd_to_datetime(right), lat, lon))
-                
-                # Interpolate to find exact JD where phase equals target_phase
-                phase_diff = point2[1] - point1[1]
-                if abs(phase_diff) > 1e-12:  # Increased precision from 1e-8 to 1e-12
-                    t = (target_phase - point1[1]) / phase_diff
-                    exact_jd = point1[0] + t * (point2[0] - point1[0])
-                else:
-                    exact_jd = point2[0]  # Use the endpoint if points are too close
-                
-                result_dt = jd_to_datetime(exact_jd)
-            else:
-                result_dt = jd_to_datetime(right)
-            
-            logger.debug(f"Found boundary at: {result_dt}")
-            return result_dt
-        
-        jd += step * direction
-        
-        # Safety check: don't search more than 2 days
-        if abs(jd - jd_et) > 2.0:  # Compare with original ET
-            raise ValueError("Boundary not found within 2 days")
-    
-    raise ValueError("Maximum iterations reached without finding boundary")
+    return jd_to_datetime(right)
 
 def calculate_tithi(dt: datetime, lat: float, lon: float) -> dict:
-    """
-    Calculate tithi (lunar day) for given datetime and location.
+    """Calculate tithi for given datetime and location.
     
     Args:
         dt (datetime): Input datetime (UTC)
@@ -148,50 +133,44 @@ def calculate_tithi(dt: datetime, lat: float, lon: float) -> dict:
         lon (float): Longitude
         
     Returns:
-        dict: Tithi information including number and boundaries
+        dict: Tithi information including number, name, and boundaries
     """
     try:
-        logger.debug(f"=== Starting tithi calculation ===")
-        logger.debug(f"Input parameters - DateTime (UTC): {dt}, Lat: {lat}, Lon: {lon}")
-        
         # Ensure input datetime is UTC
         if dt.tzinfo is None:
-            logger.warning("Input datetime has no timezone, assuming UTC")
             dt = dt.replace(tzinfo=timezone.utc)
         elif dt.tzinfo != timezone.utc:
             dt = dt.astimezone(timezone.utc)
-            logger.info(f"Converted input datetime to UTC: {dt}")
         
-        # Calculate lunar phase
-        phase = get_lunar_phase(dt, lat, lon)
+        # Get current Moon-Sun longitude difference
+        sun_pos, moon_pos = get_sun_moon_positions(dt, lat, lon)
+        moon_sun_diff = (moon_pos["longitude"] - sun_pos["longitude"]) % 360
         
         # Calculate tithi number (1-30)
-        # Use >= for boundary comparison to properly handle exact transitions
-        tithi_num = int(phase // 12) + (1 if phase % 12 >= 0 else 0)
-        logger.debug(f"Calculated tithi number: {tithi_num}")
+        tithi_number = int(moon_sun_diff / TITHI_SPAN) + 1
+        if tithi_number > 30:
+            tithi_number = 30
+            
+        # Get tithi name
+        tithi_name = TITHI_INFO[tithi_number]
         
-        # Find boundaries
-        start_time = find_tithi_boundary(dt, lat, lon, tithi_num, -1)
-        end_time = find_tithi_boundary(dt, lat, lon, tithi_num, 1)
+        # Calculate tithi boundaries
+        tithi_start_diff = (tithi_number - 1) * TITHI_SPAN
+        tithi_end_diff = tithi_number * TITHI_SPAN
         
-        # Validate duration
-        duration = (end_time - start_time).total_seconds()
-        if duration < 19 * 3600 or duration > 27 * 3600:  # Between 19 and 27 hours
-            raise ValueError(f"Invalid tithi duration: {duration/3600:.2f} hours (expected 19-27 hours)")
-        
-        logger.debug(f"Tithi duration: {duration/3600:.2f} hours")
+        # Find exact times when moon-sun difference crosses tithi boundaries
+        start_time = find_tithi_boundary(dt, lat, lon, tithi_start_diff)
+        end_time = find_tithi_boundary(dt, lat, lon, tithi_end_diff)
         
         result = {
-            "number": tithi_num,
+            "number": tithi_number,
+            "name": tithi_name,
             "start": start_time.isoformat(),
             "end": end_time.isoformat()
         }
         
-        logger.debug(f"=== Tithi calculation complete ===")
-        logger.debug(f"Final result: {result}")
-        
         return result
         
     except Exception as e:
-        logger.error(f"Error in tithi calculation: {str(e)}")
+        logger.error(f"Error calculating tithi: {str(e)}")
         raise 
