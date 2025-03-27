@@ -219,8 +219,8 @@ def calculate_yoga(dt: datetime, lat: float, lon: float) -> dict:
         result = {
             "number": yoga_num,
             "name": yoga_info,
-            "start": start_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00"),
-            "end": end_time.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00")
+            "start": start_time.isoformat(),
+            "end": end_time.isoformat()
         }
         
         logger.debug(f"=== Yoga calculation complete ===")
