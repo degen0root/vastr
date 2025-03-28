@@ -11,17 +11,17 @@ KARANA_SPAN = 6
 
 # Karana information
 KARANA_INFO = {
-    1: {"name": "Bava", "status": "favorable"},
-    2: {"name": "Balava", "status": "favorable"},
-    3: {"name": "Kaulava", "status": "favorable"},
-    4: {"name": "Taitila", "status": "favorable"},
-    5: {"name": "Gara", "status": "favorable"},
-    6: {"name": "Vanija", "status": "favorable"},
-    7: {"name": "Vishti", "status": "unfavorable"},  # Also known as Bhadra
-    8: {"name": "Shakuni", "status": "unfavorable"},  # Fixed karana
-    9: {"name": "Chatushpada", "status": "unfavorable"},  # Fixed karana
-    10: {"name": "Naga", "status": "unfavorable"},  # Fixed karana
-    11: {"name": "Kimstughna", "status": "unfavorable"}  # Fixed karana
+    1: {"name": "Bava", "status": "Favorable"},
+    2: {"name": "Balava", "status": "Favorable"},
+    3: {"name": "Kaulava", "status": "Favorable"},
+    4: {"name": "Taitila", "status": "Favorable"},
+    5: {"name": "Gara", "status": "Favorable"},
+    6: {"name": "Vanija", "status": "Favorable"},
+    7: {"name": "Vishti", "status": "Unfavorable"},  # Also known as Bhadra
+    8: {"name": "Shakuni", "status": "Unfavorable"},  # Fixed karana
+    9: {"name": "Chatushpada", "status": "Unfavorable"},  # Fixed karana
+    10: {"name": "Naga", "status": "Unfavorable"},  # Fixed karana
+    11: {"name": "Kimstughna", "status": "Unfavorable"}  # Fixed karana
 }
 
 # Degree-based karana mapping for each tithi half
