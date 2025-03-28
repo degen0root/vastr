@@ -11,17 +11,17 @@ KARANA_SPAN = 6
 
 # Karana information
 KARANA_INFO = {
-    1: {"name": "Bava", "status": "Favorable"},
-    2: {"name": "Balava", "status": "Favorable"},
-    3: {"name": "Kaulava", "status": "Favorable"},
-    4: {"name": "Taitila", "status": "Favorable"},
-    5: {"name": "Gara", "status": "Favorable"},
-    6: {"name": "Vanija", "status": "Favorable"},
-    7: {"name": "Vishti", "status": "Unfavorable"},  # Also known as Bhadra
-    8: {"name": "Shakuni", "status": "Unfavorable"},  # Fixed karana
-    9: {"name": "Chatushpada", "status": "Unfavorable"},  # Fixed karana
-    10: {"name": "Naga", "status": "Unfavorable"},  # Fixed karana
-    11: {"name": "Kimstughna", "status": "Unfavorable"}  # Fixed karana
+    1: {"name": "Bava", "favorable": "Favorable"},
+    2: {"name": "Balava", "favorable": "Favorable"},
+    3: {"name": "Kaulava", "favorable": "Favorable"},
+    4: {"name": "Taitila", "favorable": "Favorable"},
+    5: {"name": "Gara", "favorable": "Favorable"},
+    6: {"name": "Vanija", "favorable": "Favorable"},
+    7: {"name": "Vishti", "favorable": "Unfavorable"},  # Also known as Bhadra
+    8: {"name": "Shakuni", "favorable": "Unfavorable"},  # Fixed karana
+    9: {"name": "Chatushpada", "favorable": "Unfavorable"},  # Fixed karana
+    10: {"name": "Naga", "favorable": "Unfavorable"},  # Fixed karana
+    11: {"name": "Kimstughna", "favorable": "Unfavorable"}  # Fixed karana
 }
 
 # Degree-based karana mapping for each tithi half
@@ -178,7 +178,7 @@ def calculate_karana(dt: datetime, lat: float, lon: float) -> dict:
         lon (float): Longitude
         
     Returns:
-        dict: Karana information including number, name, status (favorable/unfavorable), and boundaries
+        dict: Karana information including number, name, favorable (Favorable/Unfavorable), and boundaries
     """
     try:
         # Ensure input datetime is UTC
@@ -214,7 +214,7 @@ def calculate_karana(dt: datetime, lat: float, lon: float) -> dict:
         result = {
             "number": karana_num,
             "name": karana_info["name"],
-            "status": karana_info["status"],
+            "favorable": karana_info["favorable"],
             "start": start_time.isoformat(),
             "end": end_time.isoformat()
         }
