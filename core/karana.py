@@ -11,17 +11,17 @@ KARANA_SPAN = 6
 
 # Karana information
 KARANA_INFO = {
-    1: "Bava",
-    2: "Balava",
-    3: "Kaulava",
-    4: "Taitila",
-    5: "Gara",
-    6: "Vanija",
-    7: "Vishti",  # Also known as Bhadra
-    8: "Shakuni",  # Fixed karana
-    9: "Chatushpada",  # Fixed karana
-    10: "Naga",  # Fixed karana
-    11: "Kimstughna"  # Fixed karana
+    1: {"name": "Bava", "status": "favorable"},
+    2: {"name": "Balava", "status": "favorable"},
+    3: {"name": "Kaulava", "status": "favorable"},
+    4: {"name": "Taitila", "status": "favorable"},
+    5: {"name": "Gara", "status": "favorable"},
+    6: {"name": "Vanija", "status": "favorable"},
+    7: {"name": "Vishti", "status": "unfavorable"},  # Also known as Bhadra
+    8: {"name": "Shakuni", "status": "unfavorable"},  # Fixed karana
+    9: {"name": "Chatushpada", "status": "unfavorable"},  # Fixed karana
+    10: {"name": "Naga", "status": "unfavorable"},  # Fixed karana
+    11: {"name": "Kimstughna", "status": "unfavorable"}  # Fixed karana
 }
 
 # Degree-based karana mapping for each tithi half
@@ -178,7 +178,7 @@ def calculate_karana(dt: datetime, lat: float, lon: float) -> dict:
         lon (float): Longitude
         
     Returns:
-        dict: Karana information including number, name, and boundaries
+        dict: Karana information including number, name, status (favorable/unfavorable), and boundaries
     """
     try:
         # Ensure input datetime is UTC
@@ -197,7 +197,7 @@ def calculate_karana(dt: datetime, lat: float, lon: float) -> dict:
         tithi_start = datetime.strptime(tithi_info["start"], "%Y-%m-%dT%H:%M:%S.%f+00:00").replace(tzinfo=timezone.utc)
         tithi_end = datetime.strptime(tithi_info["end"], "%Y-%m-%dT%H:%M:%S.%f+00:00").replace(tzinfo=timezone.utc)
         
-        # Get karana number and name
+        # Get karana number and info
         karana_num = get_karana_number(moon_sun_diff, tithi_number)
         karana_info = KARANA_INFO[karana_num]
         
@@ -213,7 +213,8 @@ def calculate_karana(dt: datetime, lat: float, lon: float) -> dict:
         
         result = {
             "number": karana_num,
-            "name": karana_info,
+            "name": karana_info["name"],
+            "status": karana_info["status"],
             "start": start_time.isoformat(),
             "end": end_time.isoformat()
         }
