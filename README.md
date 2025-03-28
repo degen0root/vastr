@@ -45,18 +45,15 @@ class PanchangaRequest(BaseModel):
 {
     "sun": {
         "longitude": 343.92766334165924,
-        "latitude": -5.49816023014652e-05,
-        "status": "Favorable"
+        "latitude": -5.49816023014652e-05
     },
     "moon": {
         "longitude": 331.6786008209587,
-        "latitude": -0.14239403000977088,
-        "status": "Favorable"
+        "latitude": -0.14239403000977088
     },
     "times": {
         "sunrise": "2025-03-28T05:43:49.830488+00:00",
-        "sunset": "2025-03-28T18:27:07.902375+00:00",
-        "status": "Favorable"
+        "sunset": "2025-03-28T18:27:07.902375+00:00"
     },
     "vara": {
         "vara": "Shukra",
