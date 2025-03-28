@@ -16,20 +16,20 @@ class Times(BaseModel):
 class VaraInfo(BaseModel):
     vara: str
     name: str
-    status: str  # Favorable, Unfavorable, or Neutral
+    favorable: str  # Favorable, Unfavorable, or Neutral
     ruler: str
 
 class TithiInfo(BaseModel):
     number: int
     name: str
-    status: str  # Favorable, Unfavorable, or Neutral
+    favorable: str  # Favorable, Unfavorable, or Neutral
     start: str
     end: str
 
 class Nakshatra(BaseModel):
     number: int
     name: str
-    status: str  # Favorable, Unfavorable, or Neutral
+    favorable: str  # Favorable, Unfavorable, or Neutral
     start: str
     end: str
     constellation: str  # Current moon constellation
@@ -45,14 +45,14 @@ class RawData(BaseModel):
 class Yoga(BaseModel):
     number: int
     name: str
-    status: str  # Favorable, Unfavorable, or Neutral
+    favorable: str  # Favorable, Unfavorable, or Neutral
     start: str
     end: str
 
 class Karana(BaseModel):
     number: int
     name: str
-    status: str  # Favorable or Unfavorable
+    favorable: str  # Favorable or Unfavorable
     start: str
     end: str
 
