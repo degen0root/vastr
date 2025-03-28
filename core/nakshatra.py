@@ -11,33 +11,33 @@ NAKSHATRA_SPAN = 360 / 27
 
 # Nakshatra information
 NAKSHATRA_INFO = {
-    1: "Ashwini",
-    2: "Bharani",
-    3: "Krittika",
-    4: "Rohini",
-    5: "Mrigashira",
-    6: "Ardra",
-    7: "Punarvasu",
-    8: "Pushya",
-    9: "Ashlesha",
-    10: "Magha",
-    11: "Purva Phalguni",
-    12: "Uttara Phalguni",
-    13: "Hasta",
-    14: "Chitra",
-    15: "Swati",
-    16: "Vishakha",
-    17: "Anuradha",
-    18: "Jyeshtha",
-    19: "Mula",
-    20: "Purva Ashadha",
-    21: "Uttara Ashadha",
-    22: "Shravana",
-    23: "Dhanishta",
-    24: "Shatabhisha",
-    25: "Purva Bhadrapada",
-    26: "Uttara Bhadrapada",
-    27: "Revati"
+    1: {"name": "Ashwini", "favorable": "Neutral"},  # Fast-acting, good for healing but impulsive
+    2: {"name": "Bharani", "favorable": "Unfavorable"},  # Harsh, associated with transformation
+    3: {"name": "Krittika", "favorable": "Unfavorable"},  # Sharp & burning, can cause disputes
+    4: {"name": "Rohini", "favorable": "Favorable"},  # Best for stability, marriage, and property
+    5: {"name": "Mrigashira", "favorable": "Favorable"},  # Good for creativity, travel, and new ventures
+    6: {"name": "Ardra", "favorable": "Unfavorable"},  # Destructive, linked to storms and struggles
+    7: {"name": "Punarvasu", "favorable": "Neutral"},  # Good for learning but may delay results
+    8: {"name": "Pushya", "favorable": "Favorable"},  # Highly auspicious (best for rituals, business, and education)
+    9: {"name": "Ashlesha", "favorable": "Unfavorable"},  # Deceptive, associated with poison
+    10: {"name": "Magha", "favorable": "Unfavorable"},  # Ego clashes, best for ancestral rituals
+    11: {"name": "Purva Phalguni", "favorable": "Unfavorable"},  # Excess indulgence, risky for commitments
+    12: {"name": "Uttara Phalguni", "favorable": "Favorable"},  # Good for marriage, career, and long-term plans
+    13: {"name": "Hasta", "favorable": "Favorable"},  # Good for skills, arts, and financial gains
+    14: {"name": "Chitra", "favorable": "Neutral"},  # Neutral status
+    15: {"name": "Swati", "favorable": "Favorable"},  # Favorable for trade, diplomacy, and new beginnings
+    16: {"name": "Vishakha", "favorable": "Neutral"},  # Strong for goals but can bring conflicts
+    17: {"name": "Anuradha", "favorable": "Favorable"},  # Supports teamwork, love, and spiritual growth
+    18: {"name": "Jyeshtha", "favorable": "Unfavorable"},  # Competitive, can bring power struggles
+    19: {"name": "Mula", "favorable": "Unfavorable"},  # Destructive, good for endings, not beginnings
+    20: {"name": "Purva Ashadha", "favorable": "Unfavorable"},  # Conflict-prone, aggressive energy
+    21: {"name": "Uttara Ashadha", "favorable": "Favorable"},  # Brings success in competitions and leadership
+    22: {"name": "Shravana", "favorable": "Neutral"},  # Good for learning but sensitive to malefic influences
+    23: {"name": "Dhanishta", "favorable": "Neutral"},  # Neutral status
+    24: {"name": "Shatabhisha", "favorable": "Neutral"},  # Neutral status
+    25: {"name": "Purva Bhadrapada", "favorable": "Neutral"},  # Neutral status
+    26: {"name": "Uttara Bhadrapada", "favorable": "Neutral"},  # Neutral status
+    27: {"name": "Revati", "favorable": "Favorable"}  # Auspicious for journeys, charity, and blessings
 }
 
 # Constellation information for each nakshatra
@@ -207,7 +207,7 @@ def calculate_nakshatra(dt: datetime, lat: float, lon: float) -> dict:
         lon (float): Longitude
         
     Returns:
-        dict: Nakshatra information including number, name, and boundaries
+        dict: Nakshatra information including number, name, favorable status, constellation, and boundaries
     """
     try:
         logger.debug(f"=== Starting nakshatra calculation ===")
@@ -231,6 +231,8 @@ def calculate_nakshatra(dt: datetime, lat: float, lon: float) -> dict:
         
         # Get nakshatra information
         nakshatra_info = NAKSHATRA_INFO[nakshatra_num]
+        nakshatra_name = nakshatra_info["name"]
+        nakshatra_favorable = nakshatra_info["favorable"]
         
         # Get constellation information
         constellation = CONSTELLATION_INFO[nakshatra_num]
@@ -251,13 +253,16 @@ def calculate_nakshatra(dt: datetime, lat: float, lon: float) -> dict:
         
         result = {
             "number": nakshatra_num,
-            "name": nakshatra_info,
+            "name": nakshatra_name,
+            "favorable": nakshatra_favorable,
+            "constellation": constellation,
             "start": start_time.isoformat(),
-            "end": end_time.isoformat(),
-            "constellation": constellation
+            "end": end_time.isoformat()
         }
         
         logger.debug(f"=== Nakshatra calculation complete ===")
+        logger.debug(f"Final result: {result}")
+        
         return result
         
     except Exception as e:

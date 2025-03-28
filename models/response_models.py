@@ -29,6 +29,7 @@ class TithiInfo(BaseModel):
 class Nakshatra(BaseModel):
     number: int
     name: str
+    favorable: str
     start: str
     end: str
     constellation: str  # Current moon constellation
