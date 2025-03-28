@@ -98,7 +98,7 @@ class PanchangaRequest(BaseModel):
 ### Tithi (Lunar Day)
 - Represents the angular distance (12°) between the Sun and Moon
 - 30 tithis in a lunar month (15 in Shukla Paksha, 15 in Krishna Paksha)
-- Each tithi has a favorable status (Favorable, Unfavorable, or Neutral)
+- Each tithi has a favorable (Favorable, Unfavorable, or Neutral)
 - Each tithi has a traditional Sanskrit name:
   - Shukla Paksha (1-15): Pratipada, Dwitiya, Tritiya, Chaturthi, Panchami, Shashthi, Saptami, Ashtami, Navami, Dashami, Ekadashi, Dwadashi, Trayodashi, Chaturdashi, Purnima
   - Krishna Paksha (16-30): Pratipada, Dwitiya, Tritiya, Chaturthi, Panchami, Shashthi, Saptami, Ashtami, Navami, Dashami, Ekadashi, Dwadashi, Trayodashi, Chaturdashi, Amavasya
@@ -117,7 +117,7 @@ class PanchangaRequest(BaseModel):
 - 11 karanas in total:
   - 7 movable (Chara): Bava, Balava, Kaulava, Taitila, Gara, Vanija, Vishti
   - 4 fixed (Sthira): Shakuni, Chatushpada, Naga, Kimstughna
-- Each karana has a favorable status (Favorable or Unfavorable)
+- Each karana has a favorable (Favorable or Unfavorable)
 - Fixed karanas appear on specific tithis:
   - Shakuni: Chaturdashi in Krishna Paksha
   - Chatushpada & Naga: Amavasya
@@ -132,7 +132,7 @@ class PanchangaRequest(BaseModel):
 ### Nakshatra (Lunar Mansion)
 - Represents the Moon's position relative to fixed stars
 - 27 nakshatras in total
-- Each nakshatra has a favorable status (Favorable, Unfavorable, or Neutral)
+- Each nakshatra has a favorable (Favorable, Unfavorable, or Neutral)
 - Each nakshatra spans 13°20' of the ecliptic
 - **Calculation Method**:
   - Calculate Moon's longitude relative to fixed stars
@@ -158,7 +158,7 @@ class PanchangaRequest(BaseModel):
 ### Yoga (Lunar-Solar Combination)
 - Represents the sum of Sun and Moon longitudes
 - 27 yogas in total
-- Each yoga has a favorable status (Favorable, Unfavorable, or Neutral)
+- Each yoga has a favorable (Favorable, Unfavorable, or Neutral)
 - Each yoga spans 13°20' of the ecliptic
 - **Calculation Method**:
   - Add Sun and Moon longitudes (modulo 360°)
@@ -170,22 +170,17 @@ class PanchangaRequest(BaseModel):
 
 ### Vara (Weekday)
 - Traditional weekday with additional attributes
-- Includes favorable status (Favorable, Unfavorable, or Neutral) and planetary ruler
+- Includes favorable (Favorable, Unfavorable, or Neutral) and planetary ruler
 - **Calculation Method**:
   - Determine weekday from Julian Day Number
-  - Each day has a ruling planet:
-    - Sunday (Ravi): Sun
-    - Monday (Soma): Moon
-    - Tuesday (Mangala): Mars
-    - Wednesday (Budha): Mercury
-    - Thursday (Guru): Jupiter
-    - Friday (Shukra): Venus
-    - Saturday (Shani): Saturn
-  - Favorable status based on traditional rules:
-    - Monday, Wednesday, Thursday, Friday: Generally favorable
-    - Tuesday, Saturday: Generally unfavorable
-    - Sunday: Neutral
-  - Used for determining auspicious days for various activities
+  - Favorable based on traditional rules:
+    - Sunday: Favorable for spiritual activities
+    - Monday: Favorable for emotional matters
+    - Tuesday: Favorable for courage and leadership
+    - Wednesday: Favorable for communication and business
+    - Thursday: Favorable for education and wealth
+    - Friday: Favorable for love and pleasure
+    - Saturday: Favorable for discipline and hard work
 
 ### Astronomical Calculations
 All calculations are based on precise astronomical positions using the Swiss Ephemeris:
