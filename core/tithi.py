@@ -9,38 +9,38 @@ logger = logging.getLogger(__name__)
 # Each tithi spans 12° (360° / 30 tithis)
 TITHI_SPAN = 12
 
-# Tithi information
+# Tithi information with names and favorable status
 TITHI_INFO = {
-    1: "Pratipada",
-    2: "Dwitiya",
-    3: "Tritiya",
-    4: "Chaturthi",
-    5: "Panchami",
-    6: "Shashthi",
-    7: "Saptami",
-    8: "Ashtami",
-    9: "Navami",
-    10: "Dashami",
-    11: "Ekadashi",
-    12: "Dwadashi",
-    13: "Trayodashi",
-    14: "Chaturdashi",
-    15: "Purnima",
-    16: "Pratipada",
-    17: "Dwitiya",
-    18: "Tritiya",
-    19: "Chaturthi",
-    20: "Panchami",
-    21: "Shashthi",
-    22: "Saptami",
-    23: "Ashtami",
-    24: "Navami",
-    25: "Dashami",
-    26: "Ekadashi",
-    27: "Dwadashi",
-    28: "Trayodashi",
-    29: "Chaturdashi",
-    30: "Amavasya"
+    1: {"name": "Pratipada", "favorable": "Favorable"},
+    2: {"name": "Dwitiya", "favorable": "Neutral"},
+    3: {"name": "Tritiya", "favorable": "Favorable"},
+    4: {"name": "Chaturthi", "favorable": "Unfavorable"},  # obstacles
+    5: {"name": "Panchami", "favorable": "Favorable"},
+    6: {"name": "Shashthi", "favorable": "Unfavorable"},  # conflicts
+    7: {"name": "Saptami", "favorable": "Favorable"},
+    8: {"name": "Ashtami", "favorable": "Unfavorable"},  # instability
+    9: {"name": "Navami", "favorable": "Unfavorable"},  # misfortune
+    10: {"name": "Dashami", "favorable": "Unfavorable"},  # mixed, avoid finances
+    11: {"name": "Ekadashi", "favorable": "Favorable"},  # best for fasting/spiritual activities
+    12: {"name": "Dwadashi", "favorable": "Favorable"},
+    13: {"name": "Trayodashi", "favorable": "Favorable"},  # good for wealth & Tantra
+    14: {"name": "Chaturdashi", "favorable": "Unfavorable"},  # Rahu's influence
+    15: {"name": "Purnima", "favorable": "Favorable"},  # Full Moon
+    16: {"name": "Pratipada", "favorable": "Neutral"},
+    17: {"name": "Dwitiya", "favorable": "Neutral"},
+    18: {"name": "Tritiya", "favorable": "Favorable"},
+    19: {"name": "Chaturthi", "favorable": "Unfavorable"},  # obstacles
+    20: {"name": "Panchami", "favorable": "Favorable"},
+    21: {"name": "Shashthi", "favorable": "Unfavorable"},  # conflicts
+    22: {"name": "Saptami", "favorable": "Favorable"},
+    23: {"name": "Ashtami", "favorable": "Unfavorable"},  # instability
+    24: {"name": "Navami", "favorable": "Unfavorable"},  # misfortune
+    25: {"name": "Dashami", "favorable": "Unfavorable"},  # mixed, avoid finances
+    26: {"name": "Ekadashi", "favorable": "Favorable"},  # best for fasting/spiritual activities
+    27: {"name": "Dwadashi", "favorable": "Favorable"},
+    28: {"name": "Trayodashi", "favorable": "Favorable"},  # good for wealth & Tantra
+    29: {"name": "Chaturdashi", "favorable": "Unfavorable"},  # Rahu's influence
+    30: {"name": "Amavasya", "favorable": "Unfavorable"}  # good for rituals, bad for new ventures
 }
 
 def get_lunar_phase(dt: datetime, lat: float, lon: float) -> float:
@@ -133,7 +133,7 @@ def calculate_tithi(dt: datetime, lat: float, lon: float) -> dict:
         lon (float): Longitude
         
     Returns:
-        dict: Tithi information including number, name, and boundaries
+        dict: Tithi information including number, name, favorable status, and boundaries
     """
     try:
         # Ensure input datetime is UTC
@@ -151,8 +151,10 @@ def calculate_tithi(dt: datetime, lat: float, lon: float) -> dict:
         if tithi_number > 30:
             tithi_number = 30
             
-        # Get tithi name
-        tithi_name = TITHI_INFO[tithi_number]
+        # Get tithi name and favorable status
+        tithi_info = TITHI_INFO[tithi_number]
+        tithi_name = tithi_info["name"]
+        tithi_favorable = tithi_info["favorable"]
         
         # Calculate tithi boundaries
         tithi_start_diff = (tithi_number - 1) * TITHI_SPAN
@@ -165,6 +167,7 @@ def calculate_tithi(dt: datetime, lat: float, lon: float) -> dict:
         result = {
             "number": tithi_number,
             "name": tithi_name,
+            "favorable": tithi_favorable,
             "start": start_time.isoformat(),
             "end": end_time.isoformat()
         }
