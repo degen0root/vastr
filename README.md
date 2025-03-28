@@ -83,7 +83,6 @@ class PanchangaRequest(BaseModel):
     "karana": {
         "number": 8,
         "name": "Shakuni",
-        "status": "unfavorable",
         "start": "2025-03-28T04:02:53.097498+00:00",
         "end": "2025-03-28T14:25:44.926334+00:00"
     }
@@ -113,9 +112,6 @@ class PanchangaRequest(BaseModel):
 - 11 karanas in total:
   - 7 movable (Chara): Bava, Balava, Kaulava, Taitila, Gara, Vanija, Vishti
   - 4 fixed (Sthira): Shakuni, Chatushpada, Naga, Kimstughna
-- Each karana has a favorable or unfavorable status:
-  - Favorable: Bava, Balava, Kaulava, Taitila, Gara, Vanija
-  - Unfavorable: Vishti (Bhadra), Shakuni, Chatushpada, Naga, Kimstughna
 - Fixed karanas appear on specific tithis:
   - Shakuni: Chaturdashi in Krishna Paksha
   - Chatushpada & Naga: Amavasya
