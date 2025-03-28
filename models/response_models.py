@@ -45,6 +45,7 @@ class RawData(BaseModel):
 class Yoga(BaseModel):
     number: int
     name: str
+    favorable: str
     start: str
     end: str
 

@@ -10,33 +10,33 @@ YOGA_SPAN = 360 / 27
 
 # Yoga information
 YOGA_INFO = {
-    1: "Vishkambha",
-    2: "Priti",
-    3: "Ayushman",
-    4: "Saubhagya",
-    5: "Shobhana",
-    6: "Atiganda",
-    7: "Sukarma",
-    8: "Dhriti",
-    9: "Shula",
-    10: "Ganda",
-    11: "Vriddhi",
-    12: "Dhruva",
-    13: "Vyaghata",
-    14: "Harshana",
-    15: "Vajra",
-    16: "Siddhi",
-    17: "Vyatipata",
-    18: "Variyana",
-    19: "Parigha",
-    20: "Shiva",
-    21: "Siddha",
-    22: "Sadhya",
-    23: "Shubha",
-    24: "Shukla",
-    25: "Brahma",
-    26: "Indra",
-    27: "Vaidhriti"
+    1: {"name": "Vishkambha", "favorable": "Unfavorable"},  # Obstacles & delays
+    2: {"name": "Priti", "favorable": "Favorable"},  # Love and harmony
+    3: {"name": "Ayushman", "favorable": "Favorable"},  # Longevity and health
+    4: {"name": "Saubhagya", "favorable": "Favorable"},  # Prosperity & happiness
+    5: {"name": "Shobhana", "favorable": "Favorable"},  # Beauty and auspiciousness
+    6: {"name": "Atiganda", "favorable": "Unfavorable"},  # Extreme dangers & conflicts
+    7: {"name": "Sukarma", "favorable": "Favorable"},  # Good deeds and success
+    8: {"name": "Dhriti", "favorable": "Favorable"},  # Stability and determination
+    9: {"name": "Shula", "favorable": "Unfavorable"},  # Pain & suffering
+    10: {"name": "Ganda", "favorable": "Favorable"},  # Only when not combined with malefic planets
+    11: {"name": "Vriddhi", "favorable": "Favorable"},  # Growth and expansion
+    12: {"name": "Dhruva", "favorable": "Favorable"},  # Stability & long-term gains
+    13: {"name": "Vyaghata", "favorable": "Unfavorable"},  # Sudden destruction
+    14: {"name": "Harshana", "favorable": "Favorable"},  # Joy but short-lived results
+    15: {"name": "Vajra", "favorable": "Favorable"},  # Strong but rigid (good for defense)
+    16: {"name": "Siddhi", "favorable": "Favorable"},  # Success & achievements
+    17: {"name": "Vyatipata", "favorable": "Favorable"},  # Risky but can be used for radical change
+    18: {"name": "Variyana", "favorable": "Favorable"},  # Wealth & luxury
+    19: {"name": "Parigha", "favorable": "Unfavorable"},  # Blockages & restrictions
+    20: {"name": "Shiva", "favorable": "Favorable"},  # Divine blessings
+    21: {"name": "Siddha", "favorable": "Favorable"},  # Success & achievements
+    22: {"name": "Sadhya", "favorable": "Favorable"},  # Accomplishment
+    23: {"name": "Shubha", "favorable": "Favorable"},  # General auspiciousness
+    24: {"name": "Shukla", "favorable": "Favorable"},  # Purity and clarity
+    25: {"name": "Brahma", "favorable": "Favorable"},  # Divine wisdom
+    26: {"name": "Indra", "favorable": "Favorable"},  # Leadership and power
+    27: {"name": "Vaidhriti", "favorable": "Unfavorable"}  # Bhadra Yoga - Deceptive outcomes
 }
 
 def get_yoga_number(sun_longitude: float, moon_longitude: float) -> int:
@@ -176,7 +176,7 @@ def calculate_yoga(dt: datetime, lat: float, lon: float) -> dict:
         lon (float): Longitude
         
     Returns:
-        dict: Yoga information including number, name, and boundaries
+        dict: Yoga information including number, name, favorable status, and boundaries
     """
     try:
         logger.debug(f"=== Starting yoga calculation ===")
@@ -201,6 +201,8 @@ def calculate_yoga(dt: datetime, lat: float, lon: float) -> dict:
         
         # Get yoga information
         yoga_info = YOGA_INFO[yoga_num]
+        yoga_name = yoga_info["name"]
+        yoga_favorable = yoga_info["favorable"]
         
         # Find end time of current yoga
         end_time = find_yoga_boundary(dt, lat, lon, yoga_num, 1)
@@ -218,7 +220,8 @@ def calculate_yoga(dt: datetime, lat: float, lon: float) -> dict:
         
         result = {
             "number": yoga_num,
-            "name": yoga_info,
+            "name": yoga_name,
+            "favorable": yoga_favorable,
             "start": start_time.isoformat(),
             "end": end_time.isoformat()
         }
