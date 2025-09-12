@@ -1,13 +1,19 @@
+version: '3.8'
+
 services:
   panchanga-api:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: vastr-panchanga-api
-    ports:
-      - "8000:8000"
     volumes:
       - ./ephe:/app/ephe  # Mount ephemeris files directory
     environment:
       - TZ=UTC  # Set container timezone to UTC
-    restart: unless-stopped 
+    restart: unless-stopped
+    networks:
+      - moon-net
+
+networks:
+  moon-net:
+    external: true
