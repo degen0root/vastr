@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from pydantic import BaseModel, field_validator
 
 class SunPosition(BaseModel):
@@ -10,8 +10,8 @@ class MoonPosition(BaseModel):
     latitude: float
 
 class Times(BaseModel):
-    sunrise: str
-    sunset: str
+    sunrise: Optional[str]
+    sunset: Optional[str]
 
 class VaraInfo(BaseModel):
     vara: str
@@ -59,10 +59,9 @@ class Karana(BaseModel):
 class PanchangaResponse(BaseModel):
     sun: SunPosition
     moon: MoonPosition
-    times: Dict[str, str]
+    times: Dict[str, Optional[str]]
     vara: VaraInfo
     tithi: TithiInfo
     nakshatra: Nakshatra
     yoga: Yoga
     karana: Karana
-

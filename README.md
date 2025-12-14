@@ -93,6 +93,18 @@ class PanchangaRequest(BaseModel):
 }
 ```
 
+For locations and dates with polar day/night conditions (no physical sunrise
+or sunset), the `sunrise` and `sunset` fields are returned as `null`, while
+all other Panchānga elements are still calculated and included in the response.
+
+**Error Responses:**
+
+- `422 Unprocessable Entity` (валидатор ввода):
+  - Возвращается автоматически FastAPI/Pydantic, если `latitude` или `longitude`
+    выходят за допустимые диапазоны.
+- `500 Internal Server Error`:
+  - Любые другие неожиданные ошибки вычислений или инфраструктуры.
+
 ## Panchānga Elements
 
 ### Tithi (Lunar Day)

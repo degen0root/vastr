@@ -24,6 +24,15 @@ The ephemeris path must be set before using these functions (typically in main.p
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
+class PolarDayNightError(ValueError):
+    """
+    Raised when there is no sunrise or sunset for the given
+    date and location (polar day or polar night conditions).
+    """
+
+    pass
+
 def setup_astronomy():
     """Setup astronomy calculations with correct ayanamsha and ephemeris."""
     # Set Lahiri ayanamsha for sidereal calculations
@@ -283,37 +292,60 @@ def calculate_next_sunrise(dt: datetime, lat: float, lon: float, elevation: floa
     # Set sidereal mode to Lahiri
     swe.set_sid_mode(swe.SIDM_LAHIRI, 0, 0)
     
+    # Normalize coordinates slightly to avoid edge cases at the exact poles
+    safe_lat = max(min(lat, 89.9999), -89.9999)
+    safe_lon = max(min(lon, 180.0), -180.0)
+    
     # rise_trans requires geopos as [lon, lat, elev]
-    geopos = [lon, lat, elevation]
+    geopos = [safe_lon, safe_lat, elevation]
     logger.debug(f"Calculation parameters - geopos: {geopos}")
     
-    # Calculate next sunrise using the correct parameter order
-    result = swe.rise_trans(
-        jd_ut,          # Julian day (UT)
-        swe.SUN,        # Planet number
-        swe.CALC_RISE,  # Rise/Set flag
-        geopos,         # Geographic position [lon, lat, elev]
-        0,              # Atmospheric pressure (use default)
-        0,              # Temperature (use default)
-        swe.FLG_SWIEPH  # Ephemeris flag
-    )
-    logger.debug(f"Sunrise calculation result: {result}")
+    try:
+        # Calculate next sunrise using the correct parameter order
+        result = swe.rise_trans(
+            jd_ut,          # Julian day (UT)
+            swe.SUN,        # Planet number
+            swe.CALC_RISE,  # Rise/Set flag
+            geopos,         # Geographic position [lon, lat, elev]
+            0,              # Atmospheric pressure (use default)
+            0,              # Temperature (use default)
+            swe.FLG_SWIEPH  # Ephemeris flag
+        )
+        logger.debug(f"Sunrise calculation result: {result}")
+    except Exception as e:
+        logger.error(f\"Exception in swe.rise_trans for sunrise (lat={lat}, lon={lon}): {e}\")
+        raise ValueError(f\"Failed to calculate sunrise with Swiss Ephemeris: {e}\")
     
     # rise_trans returns (return_code, (jd_rise, ...))
     if not isinstance(result, tuple) or len(result) != 2:
         raise ValueError(f"Invalid sunrise calculation result: {result}")
     
     # First element is the return code
-    if result[0] < 0:
-        raise ValueError(f"Error calculating sunrise: {result[0]}")
+    retcode = result[0]
+    if retcode < 0:
+        # -2: для этой даты/координат нет события восхода
+        # (полярный день/ночь или циркумполярное Солнце)
+        if retcode == -2:
+            msg = (
+                "No sunrise for this date and location "
+                "(polar day/night or circumpolar Sun)"
+            )
+            exc = PolarDayNightError(msg)
+        else:
+            msg = f"Error calculating sunrise, Swiss Ephemeris code: {retcode}"
+            exc = ValueError(msg)
+        logger.warning(
+            f"Swiss Ephemeris sunrise error {retcode} at lat={lat}, lon={lon}: {msg}"
+        )
+        raise exc
     
     # Second element is a tuple of 10 values, first one is the Julian day
     jd_rise = result[1][0]
-    logger.debug(f"Calculated sunrise JD: {jd_rise}")
+    logger.debug(f\"Calculated sunrise JD: {jd_rise}\")
     
     # Convert Julian day to datetime
     rise_dt = jd_to_datetime(jd_rise)
-    logger.debug(f"Calculated sunrise time: {rise_dt}")
+    logger.debug(f\"Calculated sunrise time: {rise_dt}\")
     
     return rise_dt
 
@@ -346,29 +378,50 @@ def calculate_next_sunset(dt: datetime, lat: float, lon: float, elevation: float
     # Set sidereal mode to Lahiri
     swe.set_sid_mode(swe.SIDM_LAHIRI, 0, 0)
     
+    # Normalize coordinates slightly to avoid edge cases at the exact poles
+    safe_lat = max(min(lat, 89.9999), -89.9999)
+    safe_lon = max(min(lon, 180.0), -180.0)
+    
     # rise_trans requires geopos as [lon, lat, elev]
-    geopos = [lon, lat, elevation]
+    geopos = [safe_lon, safe_lat, elevation]
     logger.debug(f"Calculation parameters - geopos: {geopos}")
     
-    # Calculate next sunset using the correct parameter order
-    result = swe.rise_trans(
-        jd_ut,          # Julian day (UT)
-        swe.SUN,        # Planet number
-        swe.CALC_SET,   # Rise/Set flag
-        geopos,         # Geographic position [lon, lat, elev]
-        0,              # Atmospheric pressure (use default)
-        0,              # Temperature (use default)
-        swe.FLG_SWIEPH  # Ephemeris flag
-    )
-    logger.debug(f"Sunset calculation result: {result}")
+    try:
+        # Calculate next sunset using the correct parameter order
+        result = swe.rise_trans(
+            jd_ut,          # Julian day (UT)
+            swe.SUN,        # Planet number
+            swe.CALC_SET,   # Rise/Set flag
+            geopos,         # Geographic position [lon, lat, elev]
+            0,              # Atmospheric pressure (use default)
+            0,              # Temperature (use default)
+            swe.FLG_SWIEPH  # Ephemeris flag
+        )
+        logger.debug(f"Sunset calculation result: {result}")
+    except Exception as e:
+        logger.error(f"Exception in swe.rise_trans for sunset (lat={lat}, lon={lon}): {e}")
+        raise ValueError(f"Failed to calculate sunset with Swiss Ephemeris: {e}")
     
     # rise_trans returns (return_code, (jd_set, ...))
     if not isinstance(result, tuple) or len(result) != 2:
         raise ValueError(f"Invalid sunset calculation result: {result}")
     
     # First element is the return code
-    if result[0] < 0:
-        raise ValueError(f"Error calculating sunset: {result[0]}")
+    retcode = result[0]
+    if retcode < 0:
+        if retcode == -2:
+            msg = (
+                "No sunset for this date and location "
+                "(polar day/night or circumpolar Sun)"
+            )
+            exc = PolarDayNightError(msg)
+        else:
+            msg = f"Error calculating sunset, Swiss Ephemeris code: {retcode}"
+            exc = ValueError(msg)
+        logger.warning(
+            f"Swiss Ephemeris sunset error {retcode} at lat={lat}, lon={lon}: {msg}"
+        )
+        raise exc
     
     # Second element is a tuple of 10 values, first one is the Julian day
     jd_set = result[1][0]
@@ -486,7 +539,7 @@ def get_sunrise_sunset_times(dt: datetime, lat: float, lon: float) -> tuple[date
         # Neither time is on the requested date, use the next available pair
         sunrise, sunset = curr_sunrise, curr_sunset
     
-    logger.debug(f"Final sunrise time: {sunrise}")
-    logger.debug(f"Final sunset time: {sunset}")
+    logger.debug(f\"Final sunrise time: {sunrise}\")
+    logger.debug(f\"Final sunset time: {sunset}\")
     
     return sunrise, sunset 

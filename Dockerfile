@@ -4,6 +4,10 @@ FROM python:3.11-alpine
 # Set working directory
 WORKDIR /app
 
+# GitHub token for private repository access
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
+
 # Install system dependencies for compilation
 RUN apk add --no-cache \
     gcc \

@@ -10,7 +10,7 @@ from typing import Optional
 
 from models.request_models import PanchangaRequest
 from models.response_models import PanchangaResponse, SunPosition, MoonPosition, Times, VaraInfo, TithiInfo, Nakshatra, Yoga, Karana
-from utils.astronomy import get_sun_moon_positions, get_sunrise_sunset_times
+from utils.astronomy import get_sun_moon_positions, get_sunrise_sunset_times, PolarDayNightError
 from core.vara import calculate_vara
 from core.tithi import calculate_tithi
 from core.nakshatra import calculate_nakshatra
@@ -47,11 +47,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class PanchangaRequest(BaseModel):
-    datetime: str
-    latitude: float
-    longitude: float
-
 @app.post("/panchanga", response_model=PanchangaResponse)
 async def calculate_panchanga(request: PanchangaRequest):
     """
@@ -65,7 +60,18 @@ async def calculate_panchanga(request: PanchangaRequest):
         
         # Calculate positions
         sun_pos, moon_pos = get_sun_moon_positions(dt, request.latitude, request.longitude)
-        sunrise, sunset = get_sunrise_sunset_times(dt, request.latitude, request.longitude)
+        
+        # Calculate sunrise and sunset. Если для координат/даты физически нет
+        # восхода/заката (полярный день/ночь), возвращаем их как null, но
+        # остальные элементы панчанги всё равно считаем.
+        try:
+            sunrise_dt, sunset_dt = get_sunrise_sunset_times(dt, request.latitude, request.longitude)
+            sunrise_str = sunrise_dt.isoformat()
+            sunset_str = sunset_dt.isoformat()
+        except PolarDayNightError as e:
+            logger.warning(f"Polar day/night condition for request {request}: {e}")
+            sunrise_str = None
+            sunset_str = None
         
         # Calculate Vara
         vara = calculate_vara(dt)
@@ -85,14 +91,13 @@ async def calculate_panchanga(request: PanchangaRequest):
         return PanchangaResponse(
             sun=sun_pos,
             moon=moon_pos,
-            times={"sunrise": sunrise.isoformat(), "sunset": sunset.isoformat()},
+            times={"sunrise": sunrise_str, "sunset": sunset_str},
             vara=vara,
             tithi=tithi,
             nakshatra=nakshatra,
             yoga=yoga,
             karana=karana
         )
-        
     except Exception as e:
         logger.error(f"Error calculating Panchanga: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
