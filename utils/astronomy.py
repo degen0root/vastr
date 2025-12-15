@@ -539,7 +539,7 @@ def get_sunrise_sunset_times(dt: datetime, lat: float, lon: float) -> tuple[date
         # Neither time is on the requested date, use the next available pair
         sunrise, sunset = curr_sunrise, curr_sunset
     
-    logger.debug(f\"Final sunrise time: {sunrise}\")
-    logger.debug(f\"Final sunset time: {sunset}\")
+    logger.debug(f"Final sunrise time: {sunrise}")
+    logger.debug(f"Final sunset time: {sunset}")
     
     return sunrise, sunset 
