@@ -313,8 +313,8 @@ def calculate_next_sunrise(dt: datetime, lat: float, lon: float, elevation: floa
         )
         logger.debug(f"Sunrise calculation result: {result}")
     except Exception as e:
-        logger.error(f\"Exception in swe.rise_trans for sunrise (lat={lat}, lon={lon}): {e}\")
-        raise ValueError(f\"Failed to calculate sunrise with Swiss Ephemeris: {e}\")
+        logger.error(f"Exception in swe.rise_trans for sunrise (lat={lat}, lon={lon}): {e}")
+        raise ValueError(f"Failed to calculate sunrise with Swiss Ephemeris: {e}")
     
     # rise_trans returns (return_code, (jd_rise, ...))
     if not isinstance(result, tuple) or len(result) != 2:
@@ -341,11 +341,11 @@ def calculate_next_sunrise(dt: datetime, lat: float, lon: float, elevation: floa
     
     # Second element is a tuple of 10 values, first one is the Julian day
     jd_rise = result[1][0]
-    logger.debug(f\"Calculated sunrise JD: {jd_rise}\")
+    logger.debug(f"Calculated sunrise JD: {jd_rise}")
     
     # Convert Julian day to datetime
     rise_dt = jd_to_datetime(jd_rise)
-    logger.debug(f\"Calculated sunrise time: {rise_dt}\")
+    logger.debug(f"Calculated sunrise time: {rise_dt}")
     
     return rise_dt
 
